@@ -1,10 +1,11 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QTabWidget, QMessageBox, QMenuBar, QMenu, QAction, QFileDialog, QLabel, QDialog, QDockWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QTabWidget, QMessageBox, QMenuBar, QMenu, QAction, QFileDialog, QLabel, QDialog, QDockWidget, QListWidget
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QUrl, Qt
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import QUrl, Qt, QTimer
+from PyQt5.QtGui import QIcon, QPixmap, QKeySequence
 from PyQt5.QtPrintSupport import QPrintDialog
 import sys
 import os
+import time
 
 button_style = """
     QPushButton {
@@ -75,7 +76,7 @@ dark_theme = """
         color: #ffffff;
         border: 1px solid #404040;
         border-radius: 5px;
-        padding: 5px;
+        padding: 7px;
         font-size: 12px;
     }
     QMenuBar {
@@ -114,38 +115,83 @@ class AboutDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("About...")
-        self.setFixedSize(700, 700)  
+        self.setFixedSize(1000, 600)
+        self.click_count = 0
+        self.last_click_time = 0
+        self.click_timer = QTimer()
+        self.click_timer.timeout.connect(self.reset_clicks)
         
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         
-        center_widget = QWidget()
-        center_layout = QVBoxLayout(center_widget)
-        center_layout.setAlignment(Qt.AlignCenter)
+        # Create web view for about.html
+        web_view = QWebEngineView()
+        about_path = os.path.join(os.path.dirname(__file__), 'about.html')
+        web_view.setUrl(QUrl.fromLocalFile(about_path))
+        layout.addWidget(web_view)
         
-        image_path = os.path.join(os.path.dirname(__file__), 'about.png')
-        if os.path.exists(image_path):
-            label = QLabel()
-            pixmap = QPixmap(image_path)
-            scaled_size = pixmap.size() * 0.75
-            label.setPixmap(pixmap.scaled(scaled_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-            label.setAlignment(Qt.AlignCenter)
-            center_layout.addWidget(label)
+        # Create OK button that overlays the web view
+        self.ok_button = QPushButton("OK", self)
+        self.ok_button.setFixedSize(80, 20)
+        self.ok_button.setStyleSheet(button_style)
+        self.ok_button.clicked.connect(self.accept)
+        self.ok_button.mouseReleaseEvent = self.handle_mouse_release
         
-        layout.addWidget(center_widget)
+        # Position button in bottom right corner
+        self.ok_button.move(self.width() - self.ok_button.width() - 11, 
+                      self.height() - self.ok_button.height() - 3)
         
-        button_container = QWidget()
-        button_layout = QHBoxLayout(button_container)
-        button_layout.setContentsMargins(0, 0, 10, 10)
-        button_layout.setAlignment(Qt.AlignRight | Qt.AlignBottom)
+        # Ensure button stays in position when dialog is resized
+        self.resizeEvent = lambda e: self.ok_button.move(
+            self.width() - self.ok_button.width() - 11,
+            self.height() - self.ok_button.height() - 3
+        )
+
+    def handle_mouse_release(self, event):
+        if event.button() == Qt.RightButton and event.modifiers() == Qt.AltModifier:
+            if self.parent().school_mode:
+                current_time = time.time()
+                if self.click_count == 0:
+                    self.click_timer.start(5000)  # 5 second timer
+                
+                self.click_count += 1
+                self.last_click_time = current_time
+                
+                if self.click_count >= 5:
+                    self.click_timer.stop()
+                    self.click_count = 0
+                    self.unblockedorsomething()
+            event.accept()
+        else:
+            super(QPushButton, self.ok_button).mouseReleaseEvent(event)
+
+    def reset_clicks(self):
+        if self.click_count > 0 and self.click_count < 5:
+            self.click_count = 0
+            self.parent().school_mode_action.setChecked(False)
+            self.parent().toggle_school_mode()
+        self.click_timer.stop()
+
+    def unblockedorsomething(self):
+        list_window = QDialog(self)
+        list_window.setWindowTitle("school gaming")
+        list_window.setFixedSize(200, 300)
         
-        ok_button = QPushButton("OK")
-        ok_button.setFixedSize(80, 20)
-        ok_button.setStyleSheet(button_style)
-        ok_button.clicked.connect(self.accept)
-        button_layout.addWidget(ok_button)
+        layout = QVBoxLayout()
         
-        layout.addWidget(button_container)
+        label = QLabel("Unblocked games")
+        layout.addWidget(label)
+        
+        list_widget = QListWidget()
+        list_widget.addItems(["Jodie (WIP)", "Slope", "Racing game (WIP)"])
+        layout.addWidget(list_widget)
+        
+        ok_btn = QPushButton("OK")
+        ok_btn.clicked.connect(list_window.accept)
+        layout.addWidget(ok_btn)
+        
+        list_window.setLayout(layout)
+        list_window.exec_()
 
 class BrowserTab(QWidget):
     def __init__(self):
@@ -163,16 +209,14 @@ class BrowserTab(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Drift [Beta 0.1.1]")
+        self.setWindowTitle("Drift Beta 0.1.2")
         self.setGeometry(100, 100, 1024, 768)
         self.school_mode = False
-        
         icon_path = os.path.join(os.path.dirname(__file__), 'icon.ico')
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
         
         menubar = self.menuBar()
-        
         
         file_menu = menubar.addMenu('File')
         
@@ -191,7 +235,7 @@ class MainWindow(QMainWindow):
         file_menu.addAction(quit_action)
         
         special_menu = menubar.addMenu('Special')
-        self.school_mode_action = QAction('School Mode', self)
+        self.school_mode_action = QAction('Education Mode', self)
         self.school_mode_action.setCheckable(True)
         self.school_mode_action.triggered.connect(self.toggle_school_mode)
         special_menu.addAction(self.school_mode_action)
@@ -203,11 +247,11 @@ class MainWindow(QMainWindow):
         help_menu = menubar.addMenu('Help')
         about_action = QAction('About', self)
         about_action.triggered.connect(self.show_about)
-        help_menu.addAction(about_action)        # Add beta notice to menubar
+        help_menu.addAction(about_action)
+        
         beta_notice = menubar.addAction("Drift is in very early beta! Expect things to not work how you expect, some things may have no code, and this app is gonna be a macOS exclusive at some point")
         beta_notice.setEnabled(False)
 
-        
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
@@ -219,6 +263,21 @@ class MainWindow(QMainWindow):
         self.tabs.tabCloseRequested.connect(self.close_tab)
         self.tabs.setContentsMargins(0, 0, 0, 0)
         self.tabs.setDocumentMode(True)
+        
+        # Add keyboard shortcuts
+        new_tab_shortcut = QAction('New Tab', self)
+        new_tab_shortcut.setShortcut(QKeySequence("Ctrl+T"))
+        new_tab_shortcut.triggered.connect(self.new_tab_shortcut_triggered)
+        self.addAction(new_tab_shortcut)
+        
+        close_tab_shortcut = QAction('Close Tab', self)
+        close_tab_shortcut.setShortcut(QKeySequence("Ctrl+W"))
+        close_tab_shortcut.triggered.connect(lambda: self.close_tab(self.tabs.currentIndex()))
+        self.addAction(close_tab_shortcut)
+        
+        # Add middle-click handling
+        self.tabs.tabBar().setMouseTracking(True)
+        self.tabs.tabBar().mouseReleaseEvent = self.handle_tab_mouse_release
         
         nav_bar = QWidget()
         nav_layout = QHBoxLayout()
@@ -279,14 +338,26 @@ class MainWindow(QMainWindow):
         app = QApplication.instance()
         app.setStyleSheet(dark_theme + button_style)
         
+    def handle_tab_mouse_release(self, event):
+        if event.button() == Qt.MiddleButton:
+            tab_index = self.tabs.tabBar().tabAt(event.pos())
+            if tab_index != -1:
+                self.close_tab(tab_index)
+        super(self.tabs.tabBar().__class__, self.tabs.tabBar()).mouseReleaseEvent(event)
+        
+    def new_tab_shortcut_triggered(self):
+        new_tab = self.add_new_tab()
+        self.url_bar.setFocus()
+        self.url_bar.selectAll()
+        
     def toggle_school_mode(self):
         self.school_mode = self.school_mode_action.isChecked()
         if self.school_mode:
-            self.setWindowTitle("Drift Education 0.1.1")
+            self.setWindowTitle("Drift Education")
             self.ice_social_btn.hide()
             self.ice_social_dock.hide()
         else:
-            self.setWindowTitle("Drift [Beta 0.1.1]")
+            self.setWindowTitle("Drift Beta 0.1.2")
             self.ice_social_btn.show()
             
     def toggle_ice_social(self):
@@ -335,7 +406,7 @@ class MainWindow(QMainWindow):
     def navigate_to_url(self):
         url = self.url_bar.text()
         if not url.startswith(('http://', 'https://')):
-            url = 'http://' + url
+            url = 'http://' + url 
         self.current_tab().web_view.setUrl(QUrl(url))
         self.url_bar.clear()
         
@@ -387,6 +458,4 @@ if __name__ == '__main__':
     app.setStyle('WindowsVista')
     window = MainWindow()
     window.show()
-    sys.exit(app.exec_())
-    sys.exit(app.exec_())
     sys.exit(app.exec_())
