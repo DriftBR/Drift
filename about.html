@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Drift</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: 
+                /* Corners - radial gradients */
+                radial-gradient(circle 28px at top left, #1a1a1a 0%, transparent 100%),
+                radial-gradient(circle 28px at top right, #1a1a1a 0%, transparent 100%),
+                radial-gradient(circle 28px at bottom left, #1a1a1a 0%, transparent 100%),
+                radial-gradient(circle 28px at bottom right, #1a1a1a 0%, transparent 100%),
+                /* Sides */
+                linear-gradient(to right, #1a1a1a 0%, transparent 20px),
+                linear-gradient(to left, #1a1a1a 0%, transparent 20px),
+                linear-gradient(to bottom, #1a1a1a 0%, transparent 20px),
+                linear-gradient(to top, #1a1a1a 0%, transparent 20px),
+                /* Darkened background image */
+                linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+                url('https://images.unsplash.com/photo-1729420478018-ed3011a1f53b?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: auto auto, auto auto, auto auto, auto auto,
+                           auto auto, auto auto, auto auto, auto auto,
+                           cover, cover;
+            background-position: top left, top right, bottom left, bottom right,
+                               left, right, bottom, top,
+                               center, center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        .title {
+            font-size: 36pt;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .main-text {
+            font-size: 24pt;
+            font-weight: normal;
+            margin-bottom: 15px;
+        }
+
+        .sub-text {
+            font-size: 12pt;
+            font-weight: normal;
+        }
+
+        .container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .button-container {
+            background-color: #2d2d2d;
+            border: 1px solid #404040;
+            border-radius: 5px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+
+        .button-separator {
+            width: 1px;
+            height: 20px;
+            background-color: #404040;
+            margin: 0 10px;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .nav-button:hover {
+            color: #cccccc;
+        }
+
+        .nav-button.active {
+            color: #808080;
+        }
+
+        #info-text {
+            margin-top: 20px;
+            font-size: 12pt;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">About Drift</h1>
+        <p class="main-text">Drift is a simple and fast web browser built on love.</p>
+        <p class="sub-text">This web browser was designed with education in mind, as well as simplistic use. Part of the browser is built on trust,
+            <br>
+            contribution and fun! If it weren't for AWETheBrowser in February 2024, this project would not be in this state that it is today.
+        </p>
+        <p>(You're running beta 0.1.2)</p>
+        <div class="button-container">
+            <button class="nav-button" data-info="X/PrivateIced81: IceSocial, Beta testers">Special Thanks</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" data-info="Name, Name, Name">Contributors</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" data-info="GitHub Repository: https://github.com/DriftBR/drift - Feel free to contribute, report issues, or star the project!">GitHub Repo</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" data-info="Created by: AWEsome5199/AWETheBird, Contact: awethegameryt@gmail.com">Creator</button>
+        </div>
+        <p id="info-text">Select a button above to see more information</p>
+    </div>
+
+    <script>
+        var buttons = document.getElementsByClassName("nav-button");
+        var infoText = document.getElementById("info-text");
+        var defaultText = infoText.textContent;
+
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener("click", function() {
+                var wasActive = this.classList.contains("active");
+                
+                // Remove active class from all buttons
+                for (var j = 0; j < buttons.length; j++) {
+                    buttons[j].classList.remove("active");
+                }
+                
+                // If button wasn't active, activate it and show its info
+                if (!wasActive) {
+                    this.classList.add("active");
+                    infoText.textContent = this.getAttribute("data-info");
+                } else {
+                    // If it was active, revert to default text
+                    infoText.textContent = defaultText;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
