@@ -8,6 +8,12 @@ This is a visual refresh of [NuggyNet](https://www.github.com/DriftBR/NuggyNet3)
 * "School" mode (Removes IceSocial sidebar)
 * [IceSocial](https://www.icesocial.net) sidebar
 
+## Planned features
+Here are future ideas for Drift:
+* <It's a little empty here, come back when I have ideas.>
+
+***FEEL FREE TO CONTRIBUTE IF YOU KNOW PYTHON AND PYQT***
+
 > [!IMPORTANT]  
 > This app might soon become Mac-only (Apple Silicon) due to the fact that the owner is getting a Mac soon and will make it natively on Xcode without the hell that Python is. 
 
