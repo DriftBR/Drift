@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QTabWidget, QMessageBox, QMenuBar, QMenu, QAction, QFileDialog, QLabel, QDialog, QDockWidget, QListWidget
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QUrl, Qt, QTimer
-from PyQt5.QtGui import QIcon, QPixmap, QKeySequence
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QTabWidget, QMessageBox, QMenuBar, QMenu, QAction, QFileDialog, QLabel, QDialog, QDockWidget, QListWidget, QToolButton, QActionGroup, QComboBox
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
+from PyQt5.QtCore import QUrl, Qt, QTimer, QPoint, QObject, QEvent, QPropertyAnimation, QAbstractAnimation
+from PyQt5.QtGui import QIcon, QPixmap, QKeySequence, QFont, QCursor
 from PyQt5.QtPrintSupport import QPrintDialog
 import sys
 import os
@@ -43,6 +43,47 @@ button_style = """
     }
     QMessageBox QPushButton:pressed {
         background-color: #1a1a1a;
+    }
+    QToolButton {
+        background-color: #2d2d2d;
+        color: #ffffff;
+        border-radius: 5px;
+        border: 1px solid #404040;
+        font-size: 12px;
+        min-width: 80px;
+        min-height: 20px;
+        padding: 5px 0px;
+    }
+    QToolButton:hover {
+        background-color: #404040;
+    }
+    QToolButton:pressed {
+        background-color: #1a1a1a;
+    }
+    QToolButton:checked {
+        background-color: #404040;
+        border: 2px solid #606060;
+    }
+    QComboBox {
+        background-color: #2d2d2d;
+        color: #ffffff;
+        border-radius: 5px;
+        border: 1px solid #404040;
+        font-size: 12px;
+        min-width: 120px;
+        min-height: 20px;
+        padding: 5px;
+    }
+    QComboBox:hover {
+        background-color: #404040;
+    }
+    QComboBox:pressed {
+        background-color: #1a1a1a;
+    }
+    QComboBox QAbstractItemView {
+        background-color: #2d2d2d;
+        color: #ffffff;
+        selection-background-color: #404040;
     }
 """
 
@@ -109,6 +150,21 @@ dark_theme = """
         color: #ffffff;
         border-radius: 5px;
     }
+    QListWidget {
+        background-color: #2d2d2d;
+        color: #ffffff;
+        border: 1px solid #404040;
+        border-radius: 5px;
+    }
+    QListWidget::item {
+        padding: 5px;
+    }
+    QListWidget::item:selected {
+        background-color: #404040;
+    }
+    QListWidget::item:hover {
+        background-color: #353535;
+    }
 """
 
 class AboutDialog(QDialog):
@@ -126,7 +182,7 @@ class AboutDialog(QDialog):
         
         # Create web view for about.html
         web_view = QWebEngineView()
-        about_path = os.path.join(os.path.dirname(__file__), 'about.html')
+        about_path = os.path.join(os.path.dirname(__file__), 'Assets', 'about.html')
         web_view.setUrl(QUrl.fromLocalFile(about_path))
         layout.addWidget(web_view)
         
@@ -173,25 +229,30 @@ class AboutDialog(QDialog):
         self.click_timer.stop()
 
     def unblockedorsomething(self):
-        list_window = QDialog(self)
-        list_window.setWindowTitle("school gaming")
-        list_window.setFixedSize(200, 300)
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Secret...")
+        dialog.setFixedSize(300, 150)
+        dialog.setStyleSheet(dark_theme)
         
         layout = QVBoxLayout()
         
-        label = QLabel("Unblocked games")
-        layout.addWidget(label)
-        
         list_widget = QListWidget()
-        list_widget.addItems(["Jodie (WIP)", "Slope", "Racing game (WIP)"])
+        list_widget.addItem("Someday... coming soon...")
         layout.addWidget(list_widget)
         
-        ok_btn = QPushButton("OK")
-        ok_btn.clicked.connect(list_window.accept)
-        layout.addWidget(ok_btn)
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
         
-        list_window.setLayout(layout)
-        list_window.exec_()
+        ok_btn = QPushButton("OK")
+        ok_btn.setStyleSheet(button_style)
+        ok_btn.clicked.connect(dialog.accept)
+        button_layout.addWidget(ok_btn)
+        
+        layout.addStretch()
+        layout.addLayout(button_layout)
+        
+        dialog.setLayout(layout)
+        dialog.exec_()
 
 class BrowserTab(QWidget):
     def __init__(self):
@@ -203,18 +264,22 @@ class BrowserTab(QWidget):
         self.web_view = QWebEngineView()
         self.web_view.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self.web_view)
-        nwin_path = os.path.join(os.path.dirname(__file__), 'nwin.html')
+        nwin_path = os.path.join(os.path.dirname(__file__), 'Assets', 'nwin.html')
         self.web_view.setUrl(QUrl.fromLocalFile(nwin_path))
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Drift Beta 0.1.2")
+        self.setWindowTitle("Drift Beta 4")
         self.setGeometry(100, 100, 1024, 768)
         self.school_mode = False
         icon_path = os.path.join(os.path.dirname(__file__), 'icon.ico')
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
+        
+        # Set window to front when loaded
+        self.activateWindow()
+        self.raise_()
         
         menubar = self.menuBar()
         
@@ -240,17 +305,10 @@ class MainWindow(QMainWindow):
         self.school_mode_action.triggered.connect(self.toggle_school_mode)
         special_menu.addAction(self.school_mode_action)
         
-        french_action = QAction('French', self)
-        french_action.triggered.connect(lambda: self.add_new_tab("https://en.wikipedia.org/wiki/Baguette"))
-        special_menu.addAction(french_action)
-        
         help_menu = menubar.addMenu('Help')
         about_action = QAction('About', self)
         about_action.triggered.connect(self.show_about)
         help_menu.addAction(about_action)
-        
-        beta_notice = menubar.addAction("Drift is in very early beta! Expect things to not work how you expect, some things may have no code, and this app is gonna be a macOS exclusive at some point")
-        beta_notice.setEnabled(False)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -295,21 +353,38 @@ class MainWindow(QMainWindow):
         self.new_tab_btn = QPushButton("+ [New Tab]")
         self.new_tab_btn.setStyleSheet(button_style)
         self.new_tab_btn.clicked.connect(self.add_new_tab)
+
+        # Create features button with dropdown menu
+        self.features_btn = QToolButton()
+        self.features_btn.setText("IceSocial   ")
+        self.features_btn.setPopupMode(QToolButton.MenuButtonPopup)
+        self.features_btn.setCheckable(True)
+        self.features_btn.clicked.connect(self.toggle_ice_social)
+        self.features_btn.setStyleSheet(button_style)
         
-        self.ice_social_btn = QPushButton("[IceSocial]")
-        self.ice_social_btn.setStyleSheet(button_style)
-        self.ice_social_btn.setCheckable(True)
-        self.ice_social_btn.clicked.connect(self.toggle_ice_social)
+        features_menu = QMenu()
+        features_menu.addAction("Music Player", lambda: self.handle_feature_selection("Music Player"))
+        features_menu.addAction("Baguette", lambda: self.handle_feature_selection("Baguette"))
+        self.features_btn.setMenu(features_menu)
         
         nav_layout.addWidget(self.back_btn)
         nav_layout.addWidget(self.forward_btn)
         nav_layout.addWidget(self.reload_btn)
         nav_layout.addWidget(self.new_tab_btn)
         nav_layout.addWidget(self.url_bar)
-        nav_layout.addWidget(self.ice_social_btn)
+        nav_layout.addWidget(self.features_btn)
         
         layout.addWidget(self.tabs)
         layout.addWidget(nav_bar)
+        
+        # Add footer label
+        footer_label = QLabel("Drift is a beta! Expect things to not work")
+        footer_label.setAlignment(Qt.AlignCenter)
+        footer_font = QFont("Segoe UI Semilight", 9)
+        footer_font.setItalic(True)
+        footer_label.setFont(footer_font)
+        footer_label.setStyleSheet("color: #808080;")
+        layout.addWidget(footer_label)
         
         self.ice_social_dock = QDockWidget(self)
         self.ice_social_dock.setTitleBarWidget(QWidget())
@@ -337,6 +412,24 @@ class MainWindow(QMainWindow):
         
         app = QApplication.instance()
         app.setStyleSheet(dark_theme + button_style)
+
+    def toggle_ice_social(self):
+        if self.features_btn.isChecked():
+            self.ice_social_dock.show()
+        else:
+            self.ice_social_dock.hide()
+
+    def handle_feature_selection(self, text):
+        if text == "Music Player":
+            music_path = os.path.join(os.path.dirname(__file__), 'Assets', 'SongPlay.html')
+            self.add_new_tab(QUrl.fromLocalFile(music_path))
+            self.ice_social_dock.hide()
+            self.features_btn.setChecked(False)
+        elif text == "Baguette":
+            baguette_path = os.path.join(os.path.dirname(__file__), 'Assets', 'Baguette.html')
+            self.add_new_tab(QUrl.fromLocalFile(baguette_path))
+            self.ice_social_dock.hide()
+            self.features_btn.setChecked(False)
         
     def handle_tab_mouse_release(self, event):
         if event.button() == Qt.MiddleButton:
@@ -354,18 +447,12 @@ class MainWindow(QMainWindow):
         self.school_mode = self.school_mode_action.isChecked()
         if self.school_mode:
             self.setWindowTitle("Drift Education")
-            self.ice_social_btn.hide()
+            self.features_btn.hide()
             self.ice_social_dock.hide()
         else:
-            self.setWindowTitle("Drift Beta 0.1.2")
-            self.ice_social_btn.show()
+            self.setWindowTitle("Drift Beta 4")
+            self.features_btn.show()
             
-    def toggle_ice_social(self):
-        if self.ice_social_btn.isChecked():
-            self.ice_social_dock.show()
-        else:
-            self.ice_social_dock.hide()
-        
     def show_about(self):
         dialog = AboutDialog(self)
         dialog.exec_()
@@ -418,40 +505,21 @@ class MainWindow(QMainWindow):
         if index != -1:
             self.tabs.setTabText(index, title)
 
-    def showEvent(self, event):
-        super().showEvent(event)
-        msg = QMessageBox()
-        msg.setWindowTitle("Just a heads up")
-        msg.setText("This is an early beta of one of my new projects.\nBugs will appear and everything is unfinished!\nThis is a very early glimpse into the future of Drift")
-        accept_button = msg.addButton("I know what to expect", QMessageBox.AcceptRole)
-        reject_button = msg.addButton("I'd rather wait", QMessageBox.RejectRole)
-        accept_button.setStyleSheet(button_style)
-        reject_button.setStyleSheet(button_style)
-        msg.exec_()
-        
-        if msg.clickedButton() == reject_button:
-            self.show_alright_then_dialog()
-        elif msg.clickedButton() == accept_button:
-            pass
+    def smooth_scroll(self, direction):
+        scroll_value = 200  # Adjust the scroll value for smoother scrolling
+        current_scroll = self.current_tab().web_view.page().scrollPosition()
+        if direction == 'up':
+            target_scroll = QPoint(current_scroll.x(), max(current_scroll.y() - scroll_value, 0))  # Ensure not to scroll below 0
+        elif direction == 'down':
+            target_scroll = QPoint(current_scroll.x(), current_scroll.y() + scroll_value)
         else:
-            sys.exit(0)
-        
-        if msg.clickedButton() == reject_button:
-            self.show_alright_then_dialog()
+            return
 
-    def show_alright_then_dialog(self):
-        msg = QMessageBox()
-        msg.setWindowTitle("Alright then")
-        msg.setText("You understand the risks of beta testing.\nYou can run the app by clicking \"I know what to expect.\"")
-        alright_button = msg.addButton("Alright", QMessageBox.AcceptRole)
-        alright_button.setStyleSheet(button_style)
-        msg.exec_()
-        
-        if msg.clickedButton() == alright_button:
-            sys.exit(0)
-        
-        if msg.clickedButton() == alright_button:
-            self.close()
+        animation = QPropertyAnimation(self.current_tab().web_view.page(), b'scrollPosition')
+        animation.setDuration(300)  # Adjust the duration for smoother animation
+        animation.setStartValue(current_scroll)
+        animation.setEndValue(target_scroll)
+        animation.start(QAbstractAnimation.DeleteWhenStopped)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
