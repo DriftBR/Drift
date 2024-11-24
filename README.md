@@ -19,8 +19,9 @@ Here are future ideas for Drift:
 
 ## The team:
 People who are on the Drift team so far:
-* [@i486nugget](https://www.github.com/i486nugget)
-* [@Folder_svg](https://bsky.app/profile/foldersvg.bsky.social)
+* [@i486nugget](https://www.github.com/i486nugget) - Lead developer and designer
+* [@Folder_svg](https://bsky.app/profile/foldersvg.bsky.social) - UI concept designer
+* [@timi2506](https://bsky.app/profile/tim.glos-omu.uk) - Dude compiling macOS versions
 
 ### ***FEEL FREE TO CONTRIBUTE IF YOU KNOW PYTHON AND PYQT***
 
@@ -33,9 +34,9 @@ People who are on the Drift team so far:
 # Building
 1) Make sure you have Python 3.12.4 installed with "pip"
 2) Download code as zip and extract
-3) Open CMD window and navigate to extracted zip directory and run command `pip install -r requirements.txt`
+3) Open CMD/Terminal and navigate to extracted zip directory and run command `pip install -r requirements.txt`
 4) Run the script to make sure everything works. Once it does, here's the building bit:
 5) Run `pip install pyinstaller`
-6) In the same directory, run `pyinstaller --noconfirm --onefile --windowed --icon "icon.ico" --name "drift" --add-data "Assets;Assets/"  ""`
+6) In the same directory, run ```pyinstaller --noconfirm --onefile --windowed --icon "icon.ico" --name "drift" --add-data "Assets;Assets/"  ""```
 7) Navigate to the brand new "dist" folder
 8) All done
