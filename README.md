@@ -1,7 +1,7 @@
 # Drift
 An open source browser based on the PyQtWebEngine and PyQt5 framework 
 
-[DOWNLOAD NOW!](github.com/driftbr/driftbr/tags)
+[DOWNLOAD NOW!]([https://github.com/driftbr/driftbr/tags](https://github.com/DriftBR/Drift/releases/))
 
 > [!NOTE]
 > (Sorry for overhyping Beta 4 and V1.0 in the [Release](https://github.com/DriftBR/Drift/releases/tag/v1.0_beta4)
