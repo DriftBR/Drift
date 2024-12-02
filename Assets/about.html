@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[!D] About Drift</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+                url('https://raw.githubusercontent.com/DriftBR/DriftBR/refs/heads/main/Assets/backdrop.png');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        .title {
+            font-size: 36pt;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .main-text {
+            font-size: 24pt;
+            font-weight: normal;
+            margin-bottom: 15px;
+        }
+
+        .sub-text {
+            font-size: 12pt;
+            font-weight: normal;
+        }
+
+        .MainContainer {
+            display: flex;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(45, 45, 45, 0.5);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(69, 69, 69, 0.100);
+            position: relative;
+            backdrop-filter: blur(10px);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .button-container {
+            background-color: #2d2d2d;
+            border: 1px solid #404040;
+            border-radius: 5px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+
+        .button-separator {
+            width: 1px;
+            height: 20px;
+            background-color: #404040;
+            margin: 0 10px;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .nav-button:hover {
+            color: #cccccc;
+        }
+
+        .nav-button.active {
+            color: #808080;
+        }
+
+        #info-text {
+            margin-top: 20px;
+            font-size: 12pt;
+        }
+    </style>
+</head>
+<body>
+    <div class="MainContainer">
+        <p class="main-text">Drift is a simple and fast web browser built on love.</p>
+        <p class="sub-text">This web browser was designed with education in mind, as well as simplistic use. Part of the browser is built on trust,
+            <br>
+            contribution and fun! If it weren't for AWETheBrowser in February 2024, this project would not be in this state that it is today.
+        </p>
+        <div class="button-container">
+            <button class="nav-button" data-info="X/PrivateIced81: IceSocial, and Drift's Beta testers. Also Zen Browser for inspiration.">Special Thanks</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" data-info="Name, Name, Name">Contributors</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" data-info="GitHub Repository: https://github.com/DriftBR/drift - Feel free to contribute, report issues, or star the project!">GitHub Repo</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" data-info="Created by: AWEsome5199/AWETheBird, Contact: awethegameryt@gmail.com">Creator</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" data-info="New Tab and About: Main developer of Drift, Baguette: [Not implemented]">Image Sources</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" data-info="v1.0.0">Version</button>
+        </div>
+        <p id="info-text">Select a button above to see more information</p>
+    </div>
+    <script>
+        var buttons = document.getElementsByClassName("nav-button");
+        var infoText = document.getElementById("info-text");
+        var defaultText = infoText.textContent;
+
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener("click", function() {
+                var wasActive = this.classList.contains("active");
+                
+                // Remove active class from all buttons
+                for (var j = 0; j < buttons.length; j++) {
+                    buttons[j].classList.remove("active");
+                }
+                
+                // If button wasn't active, activate it and show its info
+                if (!wasActive) {
+                    this.classList.add("active");
+                    infoText.textContent = this.getAttribute("data-info");
+                } else {
+                    // If it was active, revert to default text
+                    infoText.textContent = defaultText;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
