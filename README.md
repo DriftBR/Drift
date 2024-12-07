@@ -5,27 +5,18 @@ An open source browser based on the PyQtWebEngine and PyQt5 framework
 
 # [DOWNLOAD](https://github.com/DriftBR/DriftBR/releases)
 
-> [!NOTE]
-> (Sorry for overhyping Beta 4 and V1.0 in the [Release](https://github.com/DriftBR/DriftBR/releases/tag/v1.0_beta4)
+> New additions:
 
-## New features
-This is a visual refresh of [NuggyNet](https://www.github.com/DriftBR/NuggyNet3). Here are some awesome new features:
-* Tabs (v3 didn't have them)
-* "French" menu (Removed but came back in this version)
-* "Education" mode (Removes IceSocial sidebar)
-* [IceSocial](https://www.icesocial.net) sidebar
+* macOS-style UI (magic)
+* birbs
 
-## Planned features
-Here are future ideas for DriftBR:
+> Planned features
+
 * Smooth scrolling
 * YT videos higher than 360p
 * Not give up after V3
 
-## The team:
-People who are on the DriftBR team so far:
-* [@i486nugget](https://www.github.com/i486nugget) - Lead developer and designer
-* [@Folder_svg](https://bsky.app/profile/foldersvg.bsky.social) - UI concept designer
-* [@timi2506](https://bsky.app/profile/tim.glos-omu.uk) - Dude compiling macOS versions
+> TEAM MEMBERS AND ALL COMING SOON ON THE DRIFTBR WEBSITE
 
 ### ***FEEL FREE TO CONTRIBUTE IF YOU KNOW PYTHON AND PYQT***
 
