@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>[!D]riftPad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Doto', monospace;
+            font-size: 24px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        .editor-container {
+            flex: 1;
+            background: rgba(45, 45, 45, 0.5);
+            border: 1px solid #404040;
+            border-radius: 10px;
+            margin: 15px;
+            box-shadow: 0 8px 32px rgba(147, 112, 219, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            padding-right: 10px; /* Make room for scrollbar */
+        }
+
+        .text-area {
+            width: calc(100% + 10px); /* Compensate for container padding */
+            height: 100%;
+            background-color: transparent;
+            color: #ffffff;
+            border: none;
+            outline: none;
+            resize: none;
+            padding: 20px;
+            margin-right: -10px; /* Pull scrollbar back to edge */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.4;
+            font-family: inherit;
+            font-size: inherit;
+            box-sizing: border-box;
+            user-select: text;
+            scrollbar-width: thin;
+            scrollbar-color: #9370DB #2d2d2d;
+        }
+
+        /* Webkit (Chrome, Safari, Edge) scrollbar styling */
+        .text-area::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .text-area::-webkit-scrollbar-track {
+            background: rgba(45, 45, 45, 0.3);
+            border-radius: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+
+        .text-area::-webkit-scrollbar-thumb {
+            background: rgba(147, 112, 219, 0.3);
+            border-radius: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .text-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(147, 112, 219, 0.5);
+        }
+
+        .text-area::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+
+        .current-line {
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        .footer {
+            padding: 12px 20px;
+            color: #808080;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(45, 45, 45, 0.5);
+            backdrop-filter: blur(10px);
+            margin: 0 15px 15px 15px;
+            border-radius: 10px;
+            border: 1px solid #404040;
+            font-size: 14px;
+            font-family: 'Lucida Console', Monaco, monospace;
+        }
+
+        .font-size-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(45, 45, 45, 0.9);
+            color: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #404040;
+            padding: 8px 16px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            font-family: 'Lucida Console', Monaco, monospace;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .controls a {
+            color: #808080;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+        .controls a:hover {
+            color: #9370DB;
+            background: rgba(147, 112, 219, 0.1);
+        }
+
+        ::selection {
+            background: rgba(147, 112, 219, 0.3);
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <textarea class="text-area" spellcheck="false" placeholder="Start typing..."></textarea>
+    </div>
+    <div class="footer">
+        <span>Line: <span id="line-number">1</span></span>
+        <div class="controls">
+            <a onclick="document.execCommand('copy')">Copy</a>
+            <a onclick="document.execCommand('paste')">Paste</a>
+            <a onclick="document.execCommand('selectAll')">Select All</a>
+        </div>
+    </div>
+    <div class="font-size-popup">Font Size: <span id="font-size">24px</span></div>
+
+    <script>
+        const editor = document.querySelector('.text-area');
+        const lineNumberDisplay = document.getElementById('line-number');
+        const fontSizePopup = document.querySelector('.font-size-popup');
+        const fontSizeDisplay = document.getElementById('font-size');
+
+        function highlightCurrentLine() {
+            const lines = editor.value.substr(0, editor.selectionStart).split('\n');
+            const currentLineNumber = lines.length;
+            lineNumberDisplay.textContent = currentLineNumber;
+        }
+
+        function showFontSizePopup() {
+            fontSizePopup.style.opacity = '1';
+            setTimeout(() => fontSizePopup.style.opacity = '0', 1000);
+        }
+
+        editor.addEventListener('keyup', highlightCurrentLine);
+        editor.addEventListener('click', highlightCurrentLine);
+        editor.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                const fontSize = parseInt(getComputedStyle(editor).fontSize);
+                const delta = e.deltaY > 0 ? -2 : 2;
+                const newSize = Math.max(12, Math.min(72, fontSize + delta));
+                editor.style.fontSize = newSize + 'px';
+                fontSizeDisplay.textContent = newSize + 'px';
+                showFontSizePopup();
+            }
+        });
+
+        // Auto-save functionality
+        const AUTOSAVE_INTERVAL = 1000; // 1 second
+        let lastContent = editor.value;
+
+        setInterval(() => {
+            if (editor.value !== lastContent) {
+                lastContent = editor.value;
+                localStorage.setItem('driftpad_content', editor.value);
+            }
+        }, AUTOSAVE_INTERVAL);
+
+        // Load saved content
+        window.addEventListener('load', () => {
+            const savedContent = localStorage.getItem('driftpad_content');
+            if (savedContent) {
+                editor.value = savedContent;
+                highlightCurrentLine();
+            }
+        });
+    </script>
+</body>
+</html>

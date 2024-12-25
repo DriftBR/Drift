@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+                url('https://raw.githubusercontent.com/DriftBR/DriftBR/refs/heads/stable/Assets/backdrop.png');
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .search-container {
+            width: 600px;
+            max-width: 90%;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background: rgba(45, 45, 45, 0.5);
+            border: 1px solid #404040;
+            border-radius: 15px;
+            outline: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(147, 112, 219, 0.1);
+        }
+
+        .search-box::placeholder {
+            color: #808080;
+        }
+
+        .search-box:focus {
+            border-color: #9370DB;
+            background: rgba(45, 45, 45, 0.7);
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 25px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 16px;
+            background: rgba(45, 45, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid #404040;
+            border-radius: 15px;
+            user-select: none;
+            box-shadow: 0 4px 16px rgba(147, 112, 219, 0.1);
+        }
+
+        .accent {
+            color: #9370DB;
+            font-weight: 500;
+        }
+
+        .version {
+            font-size: 12px;
+            color: #808080;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <form action="https://www.google.com/search" method="get" target="_parent">
+            <input type="text" name="q" class="search-box" placeholder="Search Google or type a URL" autofocus>
+        </form>
+    </div>
+
+    <div class="footer">
+        <div>Start <span class="accent">Drifting</span>!</div>
+        <div class="version">Version 1.0</div>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const input = document.querySelector('.search-box');
+            const query = input.value.trim();
+            
+            // Check if input looks like a URL
+            if (query.includes('.') && !query.includes(' ')) {
+                e.preventDefault();
+                let url = query;
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                window.location.href = url;
+            }
+        });
+    </script>
+</body>
+</html>

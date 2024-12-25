@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>[!D]rift MIDI</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Lucida Console', Monaco, monospace;
+            font-size: 14px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        .player-container {
+            flex: 1;
+            margin: 15px 15px 0 15px;
+        }
+
+        .footer {
+            padding: 12px 20px;
+            color: #808080;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(45, 45, 45, 0.5);
+            backdrop-filter: blur(10px);
+            margin: 0 15px 15px 15px;
+            border-radius: 10px;
+            border: 1px solid #404040;
+            font-size: 12px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .status-text {
+            color: #9370DB;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container"></div>
+    <div class="footer">
+        <span class="status-text">Coming Soon</span>
+    </div>
+</body>
+</html>

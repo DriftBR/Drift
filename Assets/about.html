@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[!D] About Drift</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        .title {
+            font-size: 36pt;
+            font-weight: 600;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #9370DB, #8A2BE2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .main-text {
+            font-size: 24pt;
+            font-weight: normal;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .sub-text {
+            font-size: 12pt;
+            font-weight: normal;
+            color: #808080;
+        }
+
+        .MainContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(45, 45, 45, 0.5);
+            border: 1px solid #404040;
+            position: relative;
+            color: #fff;
+            text-align: center;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(147, 112, 219, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            width: 80%;
+        }
+
+        .button-container {
+            background-color: transparent;
+            border: 1px solid #404040;
+            border-radius: 10px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            margin-top: 30px;
+            padding: 0 5px;
+            overflow: hidden;
+        }
+
+        .button-separator {
+            width: 1px;
+            height: 20px;
+            background-color: #404040;
+            margin: 0 5px;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            padding: 8px 15px;
+            font-size: 13px;
+            outline: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(147, 112, 219, 0.1);
+        }
+
+        .nav-button.active {
+            background-color: rgba(147, 112, 219, 0.2);
+            color: #9370DB;
+        }
+
+        #info-text {
+            margin-top: 25px;
+            font-size: 13pt;
+            line-height: 1.6;
+            color: #b0b0b0;
+        }
+
+        .version {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            font-size: 10pt;
+            color: #606060;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .accent-text {
+            color: #9370DB;
+        }
+    </style>
+</head>
+<body>
+    <div class="MainContainer">
+        <div class="title">Drift</div>
+        <p class="main-text">A modern, fast, and elegant web browser.</p>
+        <p class="sub-text">Built with <span class="accent-text">♥</span> and attention to detail.</p>
+        
+        <div class="button-container">
+            <button class="nav-button active" onclick="showInfo('about')">About</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" onclick="showInfo('credits')">Credits</button>
+            <div class="button-separator"></div>
+            <button class="nav-button" onclick="showInfo('license')">License</button>
+        </div>
+
+        <div id="info-text">
+            Drift is designed to be simple yet powerful, with a focus on user experience and performance.
+        </div>
+
+        <span class="version">Version 1.0.0</span>
+    </div>
+
+    <script>
+        function showInfo(type) {
+            const infoText = document.getElementById('info-text');
+            const buttons = document.querySelectorAll('.nav-button');
+            
+            buttons.forEach(button => button.classList.remove('active'));
+            event.target.classList.add('active');
+
+            switch(type) {
+                case 'about':
+                    infoText.innerHTML = 'Drift is designed to be simple yet powerful, with a focus on user experience and performance.';
+                    break;
+                case 'credits':
+                    infoText.innerHTML = 'Created by the DriftBR team!<br>Built with PyQt5 and modern web technologies.';
+                    break;
+                case 'license':
+                    infoText.innerHTML = 'Drift is open source software.<br>Licensed under GNU General Public License v3.0.<br>https://github.com/DriftBR/DriftBR';
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
